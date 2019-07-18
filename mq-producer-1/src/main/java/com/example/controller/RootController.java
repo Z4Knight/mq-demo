@@ -2,6 +2,7 @@ package com.example.controller;
 
 
 import com.example.bean.Result;
+import com.example.callback.ReturnCallback;
 import com.example.config.RabbitConfig;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,18 @@ public class RootController {
     @Autowired
     private RabbitTemplate template;
 
+    @Autowired
+    private ReturnCallback returnCallback;
+
     @GetMapping("/default")
     public Result send() {
         Result result = new Result();
         result.setMsg("producer:1 send msg... by default");
+        // send to exchange callback
+//        template.setConfirmCallback(new ConfirmCallback());
+        // 发送失败退回
+//        template.setReturnCallback(returnCallback);
+//        template.setMandatory(true);
         template.convertAndSend(RabbitConfig.QUEUE, result);
         return result;
     }
